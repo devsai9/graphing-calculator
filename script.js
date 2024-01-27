@@ -1,5 +1,6 @@
 const head = "graph> ";
 const shell = document.querySelector("#shell");
+const graph = document.querySelector("#graph");
 let line = 0;
 
 document.body.addEventListener("mousedown", (e) => {
@@ -58,3 +59,9 @@ shell.addEventListener('keydown', (e) => {
     else if(e.key === 'Enter') handleCommand(e);
 })
 
+document.addEventListener('keydown', (e) => {
+    if(e.key === 'Escape') {
+        graph.style.display = "none";
+        shell.style.display = "inline-block";
+    }
+});
