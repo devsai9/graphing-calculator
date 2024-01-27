@@ -26,6 +26,7 @@ body {
     background-color: black;
     overflow-y: hidden;
     cursor: none;
+    word-break: break-all;
 }
 
 #screen-message {
