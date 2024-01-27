@@ -35,8 +35,10 @@ const handleCommand = (e) => {
 
 shell.addEventListener('keydown', (e) => {
     if(e.key === 'ArrowLeft') {
-        if(e.ctrlKey) shell.selectionStart = line + 1;
-        if(shell.selectionStart < head.length + line + 1) shell.selectionStart = head.length + line + 1;
+        if(shell.selectionStart < head.length + line + 1) {
+            shell.selectionStart = head.length + line + 1
+            shell.selectionEnd = head.length + line + 1
+        }
     }
     else if(e.key === 'ArrowUp') {
         const index = head.length + line;
