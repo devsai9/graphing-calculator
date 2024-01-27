@@ -1,13 +1,47 @@
 @font-face {
     font-family: "Classic Console Neue";
-    src:
-        url("fonts/clacon2.woff2") format("woff2");
+    src: url("fonts/clacon2.woff2") format("woff2");
 }
 
 * {
     font-family: "Classic Console Neue";
+    margin: 0;
 }
 
-html {
-    font-size: 1.5rem;
+body {
+    margin: 0;
+    overflow: hidden;
+    text-align: center;
+    background-color: hsl(0, 0%, 3%);
+    color: white;
+}
+
+#shell {
+    font-size: 1.3rem;
+    border: 0;
+    outline: 0;
+    resize: none;
+    height: 100vh;
+    color: white;
+    background-color: black;
+    overflow-y: hidden;
+    cursor: none;
+}
+
+#screen-message {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+}
+
+@media only screen and (max-width: 690px) {
+    #shell {
+        display: none;
+    }
+
+    #screen-message {
+        display: flex;
+    }
 }
