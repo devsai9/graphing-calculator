@@ -52,7 +52,7 @@ const tokenize = (str) => {
     let previous = null;
     while(p < str.length) {
         let generated;
-        if(str[p] === ' ') {
+        if(str[p] === ' ' || str[p] === '\n' || str[p] === '\t') {
             p++;
             continue;
         }
@@ -208,6 +208,11 @@ const parse = (data, start, end) => {
     let graftstack = new Stack();
     const consumer = {root: null, exposed: null};
     for(let i = start; i < end; i++) {
+        console.log({
+            i: i,
+            root: root,
+            exposed: exposed
+        })
         let currentToken = tokens[i];
         if(consumer.root) {
             let endUnary = i + 1;
@@ -323,8 +328,6 @@ const evaluate = (tree, context) => {
         }  
     }
     if(tree.type === "identifier") {
-        console.log(tree.value);
-        console.log(context);
         if(context[tree.value] !== undefined) return context[tree.value];
         else throw new Error(`Undefined variable '${tree.value}'`);
     }
@@ -335,14 +338,20 @@ const makeFunc = (tree, context={}) => {
 };
 
 // - x ^ 2 + 28
-const t = tokenize("+ 1 +-++++----+++--+ 2");
-//console.log(t)
-const p = parse(t);
-//console.log(p)
+// const t = tokenize("1 - x^2/2");
+// console.log(t)
+// const p = parse(t);
+// console.log(p)
 // const obj = {
 //     'x': 36
 // }
-console.log(evaluate(p))
+// console.log(evaluate(p))
 //const func = makeFunc(p);
 //console.log(func(3));
 
+export {
+    tokenize,
+    parse,
+    evaluate,
+    makeFunc
+};
