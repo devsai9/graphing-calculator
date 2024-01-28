@@ -1,24 +1,24 @@
 class Stack {
-    #arr;
+    arr;
 
     constructor() {
-        this.#arr = [];
+        this.arr = [];
     }
 
     push(item) {
-        this.#arr.push(item);
+        this.arr.push(item);
     }
 
     pop() {
-        return this.#arr.pop();
+        return this.arr.pop();
     }
 
     top() {
-        return this.#arr[this.#arr.length - 1];
+        return this.arr[this.arr.length - 1];
     }
 
     isEmpty() {
-        return this.#arr.length === 0;
+        return this.arr.length === 0;
     }
 }
 
