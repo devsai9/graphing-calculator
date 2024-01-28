@@ -27,10 +27,11 @@ const isOp = (str, i) => {
     return (code === 37) || (code === 42) || (code === 43) || (code === 45) || (code === 47) || (code === 94);
 }
 
+/*
 const isUn = (str, i) => {
     const code = str.charCodeAt(i);
     return code === 45;
-}
+}*/
 
 const isNum = (str, i) => {
     const code = str.charCodeAt(i);
@@ -56,7 +57,7 @@ const tokenize = (str) => {
             continue;
         }
         else if(isOp(str, p)) {
-            if(isUn(str, p)) {
+            if(unary[str[p]]) {
                 // Ambiguous case
                 if(!previous || previous.type === "binary" || previous.type === "unary") generated = {
                     type: "unary",
@@ -77,7 +78,7 @@ const tokenize = (str) => {
                 r++;
             }
         }
-        else if(isUn(str, p)) {
+        else if(unary[str[p]]) {
             generated = {
                 type: "unary",
                 lexeme: str[p]
@@ -162,6 +163,7 @@ const rass = {
 };
 
 const unary = {
+    '+': true,
     '-': true
 }
 
@@ -207,13 +209,33 @@ const parse = (data, start, end) => {
     const consumer = {root: null, exposed: null};
     for(let i = start; i < end; i++) {
         let currentToken = tokens[i];
-        if(currentToken.type === 'lpar') {
-            currentToken = parse(data, i + 1, parmap[i]);
-            i = parmap[i];
-            //if()
-            if(!root) root = currentToken;
+        if(consumer.root) {
+            let endUnary = i + 1;
+            while(true) {
+                if(endUnary === end) break;
+                if(tokens[endUnary].type !== "binary") {
+                    endUnary++;
+                    continue;
+                };
+                if(precmap[tokens[endUnary].lexeme] <= precmap[consumer.root.glyph]) break;
+                endUnary++;
+            }
+            const unNode = parse(data, i, endUnary);
+            consumer.exposed.child = unNode;
+            if(!root) root = consumer.root;
             else if(exposed && !exposed.right) {
-                exposed.right = currentToken;
+                exposed.right = consumer.root;
+            }
+            consumer.root = null;
+            consumer.exposed = null;
+            i = endUnary - 1;
+        }
+        else if(currentToken.type === 'lpar') {
+            const parnode = parse(data, i + 1, parmap[i]);
+            i = parmap[i];
+            if(!root) root = parnode;
+            else if(exposed && !exposed.right) {
+                exposed.right = parnode;
             }
         }
         else if(currentToken.type === 'rpar') {
@@ -293,6 +315,13 @@ const evaluate = (tree, context) => {
             case '^': return a ** b;
         }
     }
+    if(tree.type === "unary") {
+        const x = evaluate(tree.child, context);
+        switch(tree.glyph) {
+            case '+': return x;
+            case '-': return -x;
+        }  
+    }
     if(tree.type === "identifier") {
         console.log(tree.value);
         console.log(context);
@@ -301,11 +330,19 @@ const evaluate = (tree, context) => {
     }
 }
 
-const t = tokenize("-3 * x");
-console.log(t)
+const makeFunc = (tree, context={}) => {
+    return (x) => evaluate(tree, {...context, 'x': x});
+};
+
+// - x ^ 2 + 28
+const t = tokenize("+ 1 +-++++----+++--+ 2");
+//console.log(t)
 const p = parse(t);
-console.log(p)
-const obj = {
-    'x': 36
-}
-console.log(evaluate(p, obj));
+//console.log(p)
+// const obj = {
+//     'x': 36
+// }
+console.log(evaluate(p))
+//const func = makeFunc(p);
+//console.log(func(3));
+
