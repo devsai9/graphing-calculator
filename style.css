@@ -29,6 +29,14 @@ body {
     word-break: break-all;
 }
 
+#graph {
+    /* display: none; */
+    width: 670px;
+    height: 100vh;
+    text-align: center;
+    display: none;
+}
+
 #screen-message {
     display: none;
     justify-content: center;

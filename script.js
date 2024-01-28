@@ -1,5 +1,6 @@
 const head = "graph> ";
 const shell = document.querySelector("#shell");
+const graph = document.querySelector("#graph");
 let line = 0;
 
 document.body.addEventListener("mousedown", (e) => {
@@ -35,8 +36,10 @@ const handleCommand = (e) => {
 
 shell.addEventListener('keydown', (e) => {
     if(e.key === 'ArrowLeft') {
-        if(e.ctrlKey) shell.selectionStart = line + 1;
-        if(shell.selectionStart < head.length + line + 1) shell.selectionStart = head.length + line + 1;
+        if(shell.selectionStart < head.length + line + 1) {
+            shell.selectionStart = head.length + line + 1
+            shell.selectionEnd = head.length + line + 1
+        }
     }
     else if(e.key === 'ArrowUp') {
         const index = head.length + line;
@@ -56,3 +59,9 @@ shell.addEventListener('keydown', (e) => {
     else if(e.key === 'Enter') handleCommand(e);
 })
 
+document.addEventListener('keydown', (e) => {
+    if(e.key === 'Escape') {
+        graph.style.display = "none";
+        shell.style.display = "inline-block";
+    }
+});
