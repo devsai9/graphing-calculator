@@ -103,6 +103,9 @@ function drawGraphLines() {
   const snappedX = Math.round(camX / squareSide) * squareSide;
   const snappedY = Math.round(camY / squareSide) * squareSide;
 
+  const limitX = (x) => Math.min(Math.max(x, 10), canvas.width - 30);
+  const limitY = (y) => Math.min(Math.max(y, 20), canvas.height - 30);
+
   // Vertical Lines
   for (let i = -numX; i <= numX; i++) {
     const x = i * squareSide + snappedX;
@@ -114,7 +117,7 @@ function drawGraphLines() {
 
     let xText = format(x);
 
-    ctx.fillText(xText, translateX(x), translateY(0) + 20);
+    ctx.fillText(xText, translateX(x), limitY(translateY(0)) + 20);
   }
 
   // Horizontal
@@ -128,7 +131,7 @@ function drawGraphLines() {
 
     if (y != 0) {
       let yText = format(y);
-      ctx.fillText(yText, (translateX(0) + 5), (translateY(y) - 10));
+      ctx.fillText(yText, limitX(translateX(0) + 5), (translateY(y) - 10));
     }
 
   }

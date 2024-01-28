@@ -208,11 +208,6 @@ const parse = (data, start, end) => {
     let graftstack = new Stack();
     const consumer = {root: null, exposed: null};
     for(let i = start; i < end; i++) {
-        console.log({
-            i: i,
-            root: root,
-            exposed: exposed
-        })
         let currentToken = tokens[i];
         if(consumer.root) {
             let endUnary = i + 1;
@@ -260,6 +255,7 @@ const parse = (data, start, end) => {
         }
         else if(currentToken.type === 'binary') {
             if(!exposed) {
+                console.log("he")
                 const node = makeBin(currentToken.lexeme, root, null);
                 exposed = node;
                 root = node;
@@ -286,7 +282,7 @@ const parse = (data, start, end) => {
                 }
                 else {
                     const node = makeBin(currentToken.lexeme, graftstack.top().right, null);
-                    root = node;
+                    root.right = node;
                     exposed = node;
                 }
             }
@@ -338,10 +334,10 @@ const makeFunc = (tree, context={}) => {
 };
 
 // - x ^ 2 + 28
-// const t = tokenize("1 - x^2/2");
+const t = tokenize("1 - x^2/2");
 // console.log(t)
-// const p = parse(t);
-// console.log(p)
+const p = parse(t);
+console.log(p)
 // const obj = {
 //     'x': 36
 // }
