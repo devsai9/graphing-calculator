@@ -24,7 +24,7 @@ body {
     height: 100vh;
     color: white;
     background-color: black;
-    overflow-y: hidden;
+    overflow-y: auto;
     cursor: none;
     word-break: break-all;
 }
