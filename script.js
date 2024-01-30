@@ -176,11 +176,11 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-document.body.addEventListener('mousedown', () => {
-    console.log(lines);
-})
+// document.body.addEventListener('mousedown', () => {
+//     console.log(lines);
+// })
 
 
-print("fib")
+// print("fib")
 render();
-console.log(lines);
+// console.log(lines);
