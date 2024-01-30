@@ -17,6 +17,7 @@ function render() {
         if(i !== 0) shell.value += "\n";
         shell.value += lines[i].text;
     }
+    shell.scrollTop = shell.scrollHeight;
     setCaret();
 }
 
