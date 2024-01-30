@@ -334,7 +334,7 @@ const makeFunc = (tree, context={}) => {
 };
 
 // - x ^ 2 + 28
-const t = tokenize("1 - x^2/2");
+const t = tokenize("1 - x^2/2 + x^4/24 - x^6/720");
 // console.log(t)
 const p = parse(t);
 console.log(p)

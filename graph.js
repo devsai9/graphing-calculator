@@ -131,7 +131,7 @@ function drawGraphLines() {
 
     if (y != 0) {
       let yText = format(y);
-      ctx.fillText(yText, limitX(translateX(0) + 5), (translateY(y) - 10));
+      ctx.fillText(yText, limitX(translateX(0) + 5), (translateY(y) + 5));
     }
 
   }
