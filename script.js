@@ -153,7 +153,12 @@ shell.addEventListener('keydown', (e) => {
         remove();
     }
     else if(e.key === "Enter") {
-        handleCommand();
+        try {
+            handleCommand();
+        }
+        catch(e) {
+            println("Error");
+        }
         println(head, head.length);
     }
     else if(e.key === 'ArrowLeft') {
