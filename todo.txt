@@ -2,3 +2,4 @@ unary [done]
 functions
 jux mult (only if we have time)
 error handling
+overhaul command system

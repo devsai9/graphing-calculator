@@ -98,6 +98,13 @@ const tokenize = (str) => {
                 lexeme: str.slice(start, p)
             };
             r++;
+            if(previous && (previous.type === "number" || previous.type === "rpar")) {
+                tokens.push({
+                    type: "binary",
+                    lexeme: ""
+                });
+                r++;
+            }
         }
         else if(isAlpha(str, p)) {
             let start = p;
@@ -107,6 +114,13 @@ const tokenize = (str) => {
                 lexeme: str.slice(start, p)
             };
             r++;
+            if(previous && (previous.type === "number" || previous.type === "rpar")) {
+                tokens.push({
+                    type: "binary",
+                    lexeme: ""
+                });
+                r++;
+            }
         }
         else if(str.charCodeAt(p) === 61) {
             generated = {
@@ -124,6 +138,13 @@ const tokenize = (str) => {
             };
             p++;
             r++;
+            if(previous && (previous.type === "number" || previous.type === "rpar")) {
+                tokens.push({
+                    type: "binary",
+                    lexeme: ""
+                });
+                r++;
+            }
         }
         else if(str.charCodeAt(p) === 41) {
             if(parstack.length === 0) throw new Error("Mismatched parentheses");
@@ -155,6 +176,7 @@ const precmap = {
     '-': 1,
     '*': 2,
     '/': 2,
+    '':  3,
     '^': 3
 };
 
@@ -311,6 +333,7 @@ const evaluate = (tree, context) => {
         switch(tree.glyph) {
             case '+': return a + b;
             case '-': return a - b;
+            case '':
             case '*': return a * b;
             case '/': return a / b;
             case '^': return a ** b;
@@ -334,10 +357,10 @@ const makeFunc = (tree, context={}) => {
 };
 
 // - x ^ 2 + 28
-const t = tokenize("1 - x^2/2 + x^4/24 - x^6/720");
-// console.log(t)
-const p = parse(t);
-console.log(p)
+//const t = tokenize("2(2)");
+//console.log(t)
+//const p = parse(t);
+//console.log(p)
 // const obj = {
 //     'x': 36
 // }
