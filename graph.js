@@ -6,8 +6,8 @@ let camX = 0;
 let camY = 0;
 let exit = false;
 
-canvas.width = 670;
-canvas.height = window.innerHeight;
+canvas.width = 670 / 2;
+canvas.height = window.innerHeight / 2;
 canvas.style.backgroundColor = 'black'
 canvas.style.color = 'white';
 
@@ -38,9 +38,9 @@ function reverseY(screenY) {
 }
 
 function graph(func) {
-// console.log(func);
+  // console.log(func);
   ctx.strokeStyle = "red";
-  ctx.lineWidth = 3;
+  ctx.lineWidth = 1.5;
   for (let i = 0; i < canvas.width; i++) {
     const graphX1 = reverseX(i);
     const graphY1 = func(graphX1);
@@ -77,25 +77,25 @@ const supMap = {
 }
 
 function format(num) {
-    if (Math.abs(num) >= 10000) {
-      let exp = "";
-      const digits = Math.floor(Math.log(Math.abs(num)) / Math.log(10));
-      for (let i = 0; i < digits.toString().length; i++) {
-        exp += supMap[digits.toString()[i]];
-      }
-      const mantissa = num / (10 ** digits);
-      return Math.round(mantissa * 100) / 100 + "×10" + exp;
+  if (Math.abs(num) >= 10000) {
+    let exp = "";
+    const digits = Math.floor(Math.log(Math.abs(num)) / Math.log(10));
+    for (let i = 0; i < digits.toString().length; i++) {
+      exp += supMap[digits.toString()[i]];
     }
-    if (Math.abs(num) <= 0.01 && num !== 0) {
-      let exp = "";
-      const digits = -Math.floor(Math.log(Math.abs(num)) / Math.log(10));
-      for (let i = 0; i < digits.toString().length; i++) {
-        exp += supMap[digits.toString()[i]];
-      }
-      const mantissa = num * (10 ** digits);
-      return Math.round(mantissa * 100) / 100 + "×10⁻" + exp;
+    const mantissa = num / (10 ** digits);
+    return Math.round(mantissa * 100) / 100 + "×10" + exp;
+  }
+  if (Math.abs(num) <= 0.01 && num !== 0) {
+    let exp = "";
+    const digits = -Math.floor(Math.log(Math.abs(num)) / Math.log(10));
+    for (let i = 0; i < digits.toString().length; i++) {
+      exp += supMap[digits.toString()[i]];
     }
-    else return (Math.round(num * 100) / 100).toString();
+    const mantissa = num * (10 ** digits);
+    return Math.round(mantissa * 100) / 100 + "×10⁻" + exp;
+  }
+  else return (Math.round(num * 100) / 100).toString();
 }
 
 function drawGraphLines() {
@@ -103,21 +103,21 @@ function drawGraphLines() {
   const snappedX = Math.round(camX / squareSide) * squareSide;
   const snappedY = Math.round(camY / squareSide) * squareSide;
 
-  const limitX = (x) => Math.min(Math.max(x, 10), canvas.width - 30);
-  const limitY = (y) => Math.min(Math.max(y, 20), canvas.height - 30);
+  const limitX = (x) => Math.min(Math.max(x, 5), canvas.width - 15);
+  const limitY = (y) => Math.min(Math.max(y, 10), canvas.height - 15);
 
   // Vertical Lines
   for (let i = -numX; i <= numX; i++) {
     const x = i * squareSide + snappedX;
     //const xRounded = (Math.round(100 * x) / 100);
     drawLine(translateX(x), 0, translateX(x), canvas.height, 'rgb(50, 50, 50)', 1)
-    ctx.font = "19px monospace";
+    ctx.font = "10px monospace";
     ctx.strokeStyle = "white";
     ctx.fillStyle = "white";
 
     let xText = format(x);
 
-    ctx.fillText(xText, translateX(x), limitY(translateY(0)) + 20);
+    ctx.fillText(xText, translateX(x), limitY(translateY(0)) + 10);
   }
 
   // Horizontal
@@ -125,7 +125,7 @@ function drawGraphLines() {
     const y = i * squareSide + snappedY;
     // const yRounded = (Math.round(100 * y) / 100);
     drawLine(0, translateY(y), canvas.width, translateY(y), "rgb(50, 50, 50)", 1)
-    ctx.font = "19px monospace";
+    ctx.font = "10px monospace";
     ctx.strokeStyle = "white";
     ctx.fillStyle = "white";
 
@@ -136,8 +136,8 @@ function drawGraphLines() {
 
   }
 
-  drawLine(translateX(0), 0, translateX(0), canvas.height, 'white', 4)
-  drawLine(0, translateY(0), canvas.width, translateY(0), 'white', 4)
+  drawLine(translateX(0), 0, translateX(0), canvas.height, 'white', 2);
+  drawLine(0, translateY(0), canvas.width, translateY(0), 'white', 2);
 }
 
 let keys = {};
@@ -152,11 +152,11 @@ document.addEventListener('keyup', (e) => {
   keys[e.key.toLowerCase()] = false;
 });
 
-function draw(func, init=false) {
-    if(init) exit = false;
-  if(!exit) requestAnimationFrame(() => draw(func));
+function draw(func, init = false) {
+  if (init) exit = false;
+  if (!exit) requestAnimationFrame(() => draw(func));
 
-  if(keys['escape']) {
+  if (keys['escape']) {
     exit = true;
   }
 
@@ -182,7 +182,7 @@ function draw(func, init=false) {
       yInterval = -camY * x;
     }
   }
-  
+
 
   const shift = 0.075 / zoom;
   if (keys['w']) camY += shift;
@@ -214,4 +214,4 @@ function draw(func, init=false) {
 
 //draw(func);
 
-export {draw}
+export { draw }

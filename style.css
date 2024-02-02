@@ -41,6 +41,8 @@ body {
     text-align: center;
     display: none;
     cursor: none;
+    image-rendering: pixelated;
+    /*transform: scale(2);*/
 }
 
 #screen-message {
