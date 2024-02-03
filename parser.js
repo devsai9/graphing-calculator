@@ -131,13 +131,6 @@ const tokenize = (str) => {
             r++;
         }
         else if(str.charCodeAt(p) === 40) {
-            parstack.push(r);
-            generated = {
-                type: "lpar",
-                lexeme: null
-            };
-            p++;
-            r++;
             if(previous && (previous.type === "number" || previous.type === "rpar")) {
                 tokens.push({
                     type: "binary",
@@ -145,6 +138,20 @@ const tokenize = (str) => {
                 });
                 r++;
             }
+            else if(previous && previous.type === "identifier") {
+                tokens.push({
+                    type: "binary",
+                    lexeme: "@"
+                });
+                r++;
+            }
+            parstack.push(r);
+            generated = {
+                type: "lpar",
+                lexeme: null
+            };
+            p++;
+            r++;
         }
         else if(str.charCodeAt(p) === 41) {
             if(parstack.length === 0) throw new Error("Mismatched parentheses");
@@ -177,11 +184,13 @@ const precmap = {
     '*': 2,
     '/': 2,
     '':  3,
-    '^': 3
+    '^': 3,
+    '@': 10,
 };
 
 const rass = {
-    3: true
+    3: true,
+    10: true
 };
 
 const unary = {
@@ -261,6 +270,7 @@ const parse = (data, start, end) => {
             }
         }
         else if(currentToken.type === 'rpar') {
+            console.log(tokens, i);
             console.log("this should't happen");
         }
         else if(currentToken.type === 'number') {
@@ -324,9 +334,54 @@ const parse = (data, start, end) => {
     return root;
 };
 
-const evaluate = (tree, context) => {
-    if(context === undefined) context = {};
+const evalctx = {
+    system: {
+        sin: Math.sin,
+        cos: Math.cos,
+        tan: Math.tan,
+        cot: x => 1 / Math.tan(x),
+        sec: x => 1 / Math.cos(x),
+        csc: x => 1 / Math.sin(x),
+        arcsin: Math.asin,
+        arccos: Math.acos,
+        arctan: Math.atan,
+        arccot: x => 1 / Math.atan(x),
+        arcsec: x => 1 / Math.acos(x),
+        arccsc: x => 1 / Math.asin(x),
+        sinh: Math.sinh,
+        cosh: Math.cosh,
+        tanh: Math.tanh,
+        coth: x => 1 / Math.tanh(x),
+        sech: x => 1 / Math.cosh(x),
+        csch: x => 1 / Math.sinh(x),
+        arsinh: Math.asinh,
+        arcosh: Math.acosh,
+        artanh: Math.atanh,
+        arcoth: x => 1 / Math.atanh(x),
+        arsech: x => 1 / Math.acosh(x),
+        arcsch: x => 1 / Math.asinh(x),
+        abs: Math.abs,
+        ln: Math.log,
+        e: Math.E,
+        pi: Math.PI
+    },
+    user: {
+
+    }
+};
+
+const evaluate = (tree, context={}) => {
     if(tree.type === "number") return Number(tree.value);
+    if(tree.type === "binary" && tree.glyph === "@") {
+        const varname = tree.left.value;
+        let space = null;
+        if(varname in evalctx.system) space = evalctx.system;
+        else if(varname in evalctx.user) space = evalctx.user;
+        if(space === null) throw new Error(`Undefined function '${varname}'`);
+        if(typeof space[varname] !== "function") throw new Error(`'${tree.left.value}' is not a function`);
+        const func = space[varname];
+        return func(evaluate(tree.right, context));
+    }
     if(tree.type === "binary") {
         const a = evaluate(tree.left, context);
         const b = evaluate(tree.right, context);
@@ -347,8 +402,13 @@ const evaluate = (tree, context) => {
         }  
     }
     if(tree.type === "identifier") {
-        if(context[tree.value] !== undefined) return context[tree.value];
-        else throw new Error(`Undefined variable '${tree.value}'`);
+        const varname = tree.value;
+        let space = null;
+        if(varname in context) space = context;
+        else if(varname in evalctx.system) space = evalctx.system;
+        else if(varname in evalctx.user) space = evalctx.user;
+        if(space === null) throw new Error(`Undefined variable '${tree.value}'`)
+        return space[varname];
     }
 }
 
@@ -357,14 +417,14 @@ const makeFunc = (tree, context={}) => {
 };
 
 // - x ^ 2 + 28
-//const t = tokenize("2(2)");
+//const t = tokenize("cos(2)");
 //console.log(t)
 //const p = parse(t);
 //console.log(p)
 // const obj = {
 //     'x': 36
 // }
-// console.log(evaluate(p))
+//console.log(evaluate(p))
 //const func = makeFunc(p);
 //console.log(func(3));
 

@@ -111,7 +111,7 @@ function drawGraphLines() {
     const x = i * squareSide + snappedX;
     //const xRounded = (Math.round(100 * x) / 100);
     drawLine(translateX(x), 0, translateX(x), canvas.height, 'rgb(50, 50, 50)', 1)
-    ctx.font = "19px monospace";
+    ctx.font = "20px monospace";
     ctx.strokeStyle = "white";
     ctx.fillStyle = "white";
 
@@ -125,7 +125,7 @@ function drawGraphLines() {
     const y = i * squareSide + snappedY;
     // const yRounded = (Math.round(100 * y) / 100);
     drawLine(0, translateY(y), canvas.width, translateY(y), "rgb(50, 50, 50)", 1)
-    ctx.font = "19px monospace";
+    ctx.font = "20px monospace";
     ctx.strokeStyle = "white";
     ctx.fillStyle = "white";
 
@@ -211,6 +211,10 @@ function draw(func, init = false) {
 
   previousFrameLog = newFrameLog;
 }
+
+window.addEventListener("visibilitychange", () => {
+  if(document.visibilityState === "hidden") keys = {};
+});
 
 //draw(func);
 

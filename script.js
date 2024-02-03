@@ -92,27 +92,29 @@ shell.addEventListener("mousedown", () => {
 
 window.addEventListener("resize", () => {
     if(window.innerWidth > 690) shell.focus();
-})
+});
 
 shell.value = head;
 
 const handleCommand = () => {
-    const command = getLine().text.slice(head.length).trim().replace(/\s+/g, ' ');
-    const space = command.indexOf(" ");
-    const func = space > -1 ? command.slice(0, space).toLowerCase() : command.toLowerCase();
-    const arg = space > -1 ? command.slice(space + 1) : null;
+    const line = getLine().text.slice(head.length).trim().replace(/\s+/g, ' ');
+    const space = line.indexOf(" ");
+    const command = space > -1 ? line.slice(0, space).toLowerCase() : line.toLowerCase();
+    const arg = space > -1 ? line.slice(space + 1) : null;
 
     // console.log("com:", command);
 
-    switch (func) {
+    switch (command) {
         case 'draw': 
             if(!arg) {
                 println("'draw' requires 1 argument\nFor more info, use 'help draw'");
                 return;
             }
+            const func = makeFunc(parse(tokenize(arg)));
+            func(0);
             graph.style.display = "inline-block";
             shell.style.display = "none";
-            gr.draw(makeFunc(parse(tokenize(arg))), true);
+            gr.draw(func, true);
             println("Successfully graphed 1 function");
             return;
         case 'calc': {
@@ -135,7 +137,7 @@ const handleCommand = () => {
             println("placeholder");
             return;
     }
-    println(`Unrecognized command '${func}'`);
+    println(`Unrecognized command '${command}'`);
 };
 
 shell.addEventListener('keydown', (e) => {
@@ -158,6 +160,7 @@ shell.addEventListener('keydown', (e) => {
         }
         catch(e) {
             println("Error");
+            console.error(e);
         }
         println(head, head.length);
     }
