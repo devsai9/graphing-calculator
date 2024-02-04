@@ -50,6 +50,7 @@ function print(str) {
 }
 
 function println(str, wall=0) {
+    str = str || "";
     if(lines.length === 0) {
         lines.push({
             start: 0,
@@ -96,48 +97,80 @@ window.addEventListener("resize", () => {
 
 shell.value = head;
 
-const handleCommand = () => {
-    const line = getLine().text.slice(head.length).trim().replace(/\s+/g, ' ');
-    const space = line.indexOf(" ");
-    const command = space > -1 ? line.slice(0, space).toLowerCase() : line.toLowerCase();
-    const arg = space > -1 ? line.slice(space + 1) : null;
-
-    // console.log("com:", command);
-
-    switch (command) {
-        case 'draw': 
-            if(!arg) {
-                println("'draw' requires 1 argument\nFor more info, use 'help draw'");
-                return;
+const commands = {
+    "help": {
+        run: (args) => {
+            if(args.length === 0) {
+                println("Available commands:");
+                for(const [k, v] of Object.entries(commands)) {
+                    println(v.syntax);
+                }
+                println("\nTo learn more about a command, type 'help' followed by that command");
             }
-            const func = makeFunc(parse(tokenize(arg)));
+            else {
+                if(args.length > 1) println("Warning: only 1 argument is required, the rest will be ignored");
+                const command = args[0];
+                if(!(command in commands)) throw new Error(`'${command}' is not a command`);
+                println(commands[command].details);
+            }
+        },
+        syntax: "help [command]?",
+        details: "-Use 'help' to get a list of available commands\n-Use 'help' followed by a command to learn more about the command\n  *Ex: help draw"
+    },
+    "cls": {
+        run: (args) => {
+            lines = [];
+        },
+        syntax: "cls",
+        details: "-Use 'cls' to clear the screen"
+    },
+    "calc": {
+        run: (args) => {
+            if(args.length === 0) throw new Error("The command 'calc' expects 1 argument");
+            const expr = args[0];
+            const res = evaluate(parse(tokenize(expr))).toString();
+            println(res);
+        },
+        runoff: true,
+        syntax: "calc [expression]",
+        details: "-Use 'calc' followed by an expression to evaluate it\n  *Ex: calc (1.5-3)*6^2"
+    },
+    "draw": {
+        run: (args) => {
+            if(args.length === 0) throw new Error("The command 'draw' expects 1 argument");
+            const expr = args[0];
+            const func = makeFunc(parse(tokenize(expr)));
             func(0);
             graph.style.display = "inline-block";
             shell.style.display = "none";
             gr.draw(func, true);
-            println("Successfully graphed 1 function");
-            return;
-        case 'calc': {
-            if(!arg) {
-                println("'calc' requires 1 argument\nFor more info, use 'help calc'");
-                return;
-            }
-            const res = evaluate(parse(tokenize(arg))).toString();
-            println(res);
-            return;
-        }
-        case 'cls':
-            lines = [];
-            return;
-        case 'help':
-            if(!arg) {
-                println("Available commands:\ndraw [function]\ncalc [expression]\ncls\nhelp [command]?");
-                return;
-            }
-            println("placeholder");
-            return;
+            println("Success");
+        },
+        runoff: true,
+        syntax: "draw [expression]",
+        details: "-Use 'draw' followed by a math expression to graph it as a function of x\n  *Ex: draw x^2+2x-3"
     }
-    println(`Unrecognized command '${command}'`);
+};
+
+const handleCommand = () => {
+    const line = getLine().text.slice(head.length).trim().replace(/\s+/g, ' ');
+    if(line === "" || line === " ") return; 
+
+    const space = line.indexOf(" ");
+    const command = space > -1 ? line.slice(0, space).toLowerCase() : line.toLowerCase();
+    const argstr = space == -1 ? null : line.slice(space + 1);
+
+    if(!(command in commands)) {
+        println(`Unrecognized command '${command}'`);
+        return;
+    }
+
+    const com = commands[command];
+    let args;
+    if(argstr === null || argstr.length === 0) args = [];
+    else args = com.runoff ? [argstr] : argstr.split(" ");
+    
+    com.run(args);
 };
 
 shell.addEventListener('keydown', (e) => {
@@ -159,8 +192,8 @@ shell.addEventListener('keydown', (e) => {
             handleCommand();
         }
         catch(e) {
-            println("Error");
-            console.error(e);
+            println("ERROR:\n" + e.message);
+            //console.error(e);
         }
         println(head, head.length);
     }

@@ -1,5 +1,8 @@
 unary [done]
-functions
-jux mult (only if we have time)
-error handling
-overhaul command system
+functions [done]
+jux mult [done]
+error handling [working]
+overhaul command system [done]
+file system [working]
+save and load graphs
+download and upload files
