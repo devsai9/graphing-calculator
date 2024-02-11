@@ -1,0 +1,9 @@
+alpha 1.0
+alpha 1.1
+alpha 1.2
+alpha 1.3 -2/7/2024:
+*File system (only directories are supported as of now) and related commands
+*Command history with up and down arrows
+*New command 'echo'
+*New command 'clh'
+*Icon file
